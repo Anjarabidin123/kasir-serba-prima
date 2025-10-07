@@ -22,6 +22,7 @@ interface UserProfile {
   user_id: string;
   email: string;
   username: string;
+  store_name?: string;
   is_approved: boolean;
   created_at: string;
   approved_at?: string;
@@ -122,7 +123,7 @@ export const UserManagement = () => {
       console.log('Fetching users...');
       const { data, error } = await supabase
         .from('profiles')
-        .select('user_id, email, username, is_approved, created_at, approved_at')
+        .select('user_id, email, username, store_name, is_approved, created_at, approved_at')
         .order('created_at', { ascending: false });
 
       console.log('Fetch result:', { data, error });
@@ -339,7 +340,7 @@ export const UserManagement = () => {
                   className="flex items-center justify-between p-4 border rounded-lg"
                 >
                   <div>
-                    <p className="font-semibold">{user.username}</p>
+                    <p className="font-semibold">{user.store_name || user.username}</p>
                     <p className="text-sm text-muted-foreground">{user.email}</p>
                     <p className="text-xs text-muted-foreground">
                       Daftar: {new Date(user.created_at).toLocaleString('id-ID')}
@@ -386,7 +387,7 @@ export const UserManagement = () => {
                   className="flex items-center justify-between p-4 border rounded-lg"
                 >
                   <div>
-                    <p className="font-semibold">{user.username}</p>
+                    <p className="font-semibold">{user.store_name || user.username}</p>
                     <p className="text-sm text-muted-foreground">{user.email}</p>
                     <p className="text-xs text-muted-foreground">
                       Disetujui: {user.approved_at ? new Date(user.approved_at).toLocaleString('id-ID') : '-'}

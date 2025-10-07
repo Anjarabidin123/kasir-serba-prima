@@ -112,9 +112,13 @@ export const WaitingApproval = () => {
           </div>
 
           <Button
-            onClick={() => navigate('/login')}
+            onClick={() => {
+              supabase.auth.signOut();
+              navigate('/login');
+            }}
             variant="ghost"
             className="w-full"
+            type="button"
           >
             Kembali ke Login
           </Button>

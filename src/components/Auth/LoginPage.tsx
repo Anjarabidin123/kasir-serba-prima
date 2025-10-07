@@ -29,7 +29,8 @@ export const LoginPage = () => {
   
   const [signUpData, setSignUpData] = useState({
     email: '',
-    username: '',
+    storeName: '',
+    storeCategory: 'sembako' as 'sembako' | 'warung_kopi' | 'elektronik' | 'pakaian' | 'lainnya',
     password: '',
     confirmPassword: ''
   });
@@ -103,6 +104,11 @@ export const LoginPage = () => {
     e.preventDefault();
     setErrors('');
 
+    if (!signUpData.storeName.trim()) {
+      setErrors('Nama toko harus diisi');
+      return;
+    }
+
     if (signUpData.password !== signUpData.confirmPassword) {
       setErrors('Password tidak cocok');
       return;
@@ -113,16 +119,22 @@ export const LoginPage = () => {
       return;
     }
 
-    const { error } = await signUp(signUpData.email, signUpData.username, signUpData.password);
+    const { error } = await signUp(
+      signUpData.email, 
+      signUpData.storeName.trim(), 
+      signUpData.storeCategory,
+      signUpData.password
+    );
     if (error) {
       setErrors(error.message || 'Pendaftaran gagal');
     } else {
-      sonnerToast.success('Pendaftaran berhasil! Silakan tunggu approval dari admin.');
+      sonnerToast.success('Pendaftaran berhasil! Silakan cek email Anda untuk konfirmasi.');
       setErrors('');
       // Clear form
       setSignUpData({
         email: '',
-        username: '',
+        storeName: '',
+        storeCategory: 'sembako',
         password: '',
         confirmPassword: ''
       });
@@ -215,14 +227,31 @@ export const LoginPage = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="username">Username</Label>
+                  <Label htmlFor="storeName">Nama Toko</Label>
                   <Input
-                    id="username"
+                    id="storeName"
                     type="text"
-                    value={signUpData.username}
-                    onChange={(e) => setSignUpData(prev => ({ ...prev, username: e.target.value }))}
+                    value={signUpData.storeName}
+                    onChange={(e) => setSignUpData(prev => ({ ...prev, storeName: e.target.value }))}
+                    placeholder="Masukkan nama toko Anda"
                     required
                   />
+                </div>
+                <div>
+                  <Label htmlFor="storeCategory">Jenis Toko</Label>
+                  <select
+                    id="storeCategory"
+                    value={signUpData.storeCategory}
+                    onChange={(e) => setSignUpData(prev => ({ ...prev, storeCategory: e.target.value as any }))}
+                    className="w-full px-3 py-2 border border-input bg-background rounded-md"
+                    required
+                  >
+                    <option value="sembako">Sembako</option>
+                    <option value="warung_kopi">Warung Kopi</option>
+                    <option value="elektronik">Elektronik</option>
+                    <option value="pakaian">Pakaian</option>
+                    <option value="lainnya">Lainnya</option>
+                  </select>
                 </div>
                 <div>
                   <Label htmlFor="signup-password">Password</Label>

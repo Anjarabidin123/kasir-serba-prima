@@ -7,7 +7,7 @@ interface AuthContextType {
   session: Session | null;
   signIn: (email: string, password: string) => Promise<{ error?: any }>;
   signInWithUsername: (username: string, password: string) => Promise<{ error?: any }>;
-  signUp: (email: string, username: string, password: string) => Promise<{ error?: any }>;
+  signUp: (email: string, storeName: string, storeCategory: string, password: string) => Promise<{ error?: any }>;
   signOut: () => Promise<void>;
   verifyAdminPassword: (password: string) => Promise<boolean>;
   loading: boolean;
@@ -92,14 +92,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const signUp = async (email: string, username: string, password: string) => {
+  const signUp = async (email: string, storeName: string, storeCategory: string, password: string) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          username: username,
-          is_approved: false // Set default approval status
+          store_name: storeName,
+          store_category: storeCategory,
+          is_approved: false
         },
         emailRedirectTo: `${window.location.origin}/waiting-approval`
       }
@@ -113,7 +114,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await supabase.functions.invoke('notify-admin-new-user', {
           body: {
             userEmail: email,
-            username: username,
+            storeName: storeName,
+            storeCategory: storeCategory,
           },
         });
       } catch (notifyError) {
