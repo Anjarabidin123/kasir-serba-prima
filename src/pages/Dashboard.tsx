@@ -12,8 +12,15 @@ export const Dashboard = () => {
   const { currentStore } = useStore();
 
   // Redirect non-admin users directly to POS after login
+  // Admin (tokoanjar09@gmail.com) always sees Dashboard
   useEffect(() => {
-    if (!loading && !isAdmin && user?.email !== 'tokoanjar09@gmail.com') {
+    // If user is tokoanjar09@gmail.com, never redirect - always show Dashboard
+    if (user?.email === 'tokoanjar09@gmail.com') {
+      return;
+    }
+    
+    // For other users, redirect to POS if not admin
+    if (!loading && !isAdmin) {
       navigate('/pos', { replace: true });
     }
   }, [isAdmin, loading, navigate, user]);
@@ -38,8 +45,9 @@ export const Dashboard = () => {
     );
   }
 
-  // Only admins (tokoanjar09@gmail.com) see this page
-  if (!isAdmin && user?.email !== 'tokoanjar09@gmail.com') {
+  // Only admins see this page
+  // Always show Dashboard for tokoanjar09@gmail.com
+  if (user?.email !== 'tokoanjar09@gmail.com' && !isAdmin) {
     return null;
   }
 
